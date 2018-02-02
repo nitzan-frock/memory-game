@@ -1,4 +1,5 @@
 .tile {
+    border: solid black;
     box-shadow: 0 4px 8px 0 #aaa;
     transition: 0.3s;
     cursor: pointer;
