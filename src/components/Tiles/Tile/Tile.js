@@ -1,24 +1,24 @@
 import React from 'react';
 
-import styleClasses from './Tile.css';
+import classes from './Tile.css';
 
 const Tile = (props) => {
     let tile = (
-            <div className={styleClasses.Tile} onClick={props.click}>
-                <p>?</p>
-            </div>
+        <p>?</p>
     );
 
     if (props.checked === true) {
         console.log("tile checked");
         tile = (
-                <div className={styleClasses.Tile}>
-                    <img className="image" src={props.img} alt="" />
-                </div>
+            <img className="image" src={props.img} alt="" />
         );
     }
     
-    return (tile);
+    return (
+        <div className={classes.Tile} onClick={props.flipped}>
+            {tile}
+        </div>
+    );
 }
 
 export default Tile;

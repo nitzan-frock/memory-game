@@ -8,7 +8,7 @@ const Tiles = (props) => {
     return props.tiles.map((tile) => {
         return <Tile 
             img={tile.img}
-            click={() => props.clicked(tile.id)} 
+            flipped={() => props.flipped(tile.id)} 
             key={tile.id} 
             checked={tile.checked} />;
     });

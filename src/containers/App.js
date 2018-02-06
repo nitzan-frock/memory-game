@@ -19,23 +19,29 @@ const IMAGES = [
 class App extends Component {
   state = {
     tiles: [
-      {id: 0, img: null, checked: false},
-      {id: 1, img: null, checked: false},
-      {id: 2, img: null, checked: false},
-      {id: 3, img: null, checked: false},
+      {id: 0, img: null, checked: false, paired: false},
+      {id: 1, img: null, checked: false, paired: false},
+      {id: 2, img: null, checked: false, paired: false},
+      {id: 3, img: null, checked: false, paired: false},
+      {id: 4, img: null, checked: false, paired: false},
+      {id: 5, img: null, checked: false, paired: false},
+      {id: 6, img: null, checked: false, paired: false},
+      {id: 7, img: null, checked: false, paired: false},
     ],
     numberOfTilesClicked: 0,
     gameStart: false,
+    pairCheck: {
+      tile1: null,
+      tile2: null,
+    },
   }
 
   shuffleTiles = (array) => {
     let m = array.length, t, i;
-
     // while there are elements to shuffle
     while (m) {
       // pick a remaining element
       i = Math.floor(Math.random()* m--);
-
       // replace current element with shuffled element
       t = array[m];
       array[m] = array[i];
@@ -54,20 +60,21 @@ class App extends Component {
 
   setTileImage = (images) => {
     console.log("in setTileImage");
-    const tiles = {
+    const tiles = [
       ...this.state.tiles
-    };
+    ];
     const tilesLength = Object.keys(tiles).length;
     const tileIndex = this.shuffleTiles(this.indexTiles(tilesLength));
     let pair = 0;
-    let img = 0;
+    let imgIndex = 0;
     for (let i = 0; i < tileIndex.length; i++) {
-      tiles[tileIndex[i]].img = images[img].URL;
-      if (pair < 2) {
+      tiles[tileIndex[i]].img = images[imgIndex].URL;
+      if (pair < 1) {
         pair++;
       }
       else {
-        img++;
+        pair = 0;
+        imgIndex++;
       }
     }
     console.log(tiles);
@@ -76,31 +83,77 @@ class App extends Component {
 
   flipTileHandler = (tileID) => {
     console.log("in flipTileHandler");
-    const tiles = {
-      ...this.state.tiles
-    };
-    console.log(tiles);
+    console.log("tileID: " + tileID);
     this.setState((prevState, props) => {
-      tiles[tileID].checked = !prevState.tiles[tileID].checked;
-      console.log(tiles[tileID].checked);
-      return {
-        tiles: tiles,
+      const tiles = [...prevState.tiles];
+      if (!tiles[tileID].paired) {
+        tiles[tileID].checked = !tiles[tileID].checked;
+        const pairCheck = {...prevState.pairCheck};
+        let tilesChecked = null;
+        if (tiles[tileID].checked) {
+          if (pairCheck.tile1 === null) {
+            pairCheck.tile1 = tiles[tileID];
+            console.log("tile1 checked");
+            console.log(tiles[tileID]);
+          }
+          else {
+            pairCheck.tile2 = tiles[tileID];
+            console.log("tile2 checked : ");
+            console.log(tiles[tileID]);
+            tilesChecked = this.tilesClickedHandler(tiles, pairCheck);
+            console.log(tilesChecked);
+            console.log("returning tilesChecked");
+            return {
+              tiles: tilesChecked.tiles,
+              pairCheck: tilesChecked.pairCheck
+            }
+          }
+        }
+        console.log("returning tiles and paircheck");
+        return {
+          tiles: tiles,
+          pairCheck: pairCheck,
+        }
       }
     });
   }
 
   startGameHandler = () => {
-    console.log("inside startGameHandler");
+    console.log("in startGameHandler");
     const images = this.shuffleTiles(IMAGES);
     const tiles = this.setTileImage(images);
-    console.log("after setTileImage");
-    console.log(tiles);
     this.setState((prevState, props) => {
       return {
-        //tiles: tiles,
+        tiles: tiles,
         gameStart: !prevState.gameStart
       }
     });
+  }
+
+  tilesClickedHandler = (tiles, pairCheck) => {
+    console.log("in tilesClickedHandler");
+    if (pairCheck.tile1.img === pairCheck.tile2.img) {
+      console.log("img are equal");
+      tiles[pairCheck.tile1.id].paired = true;
+      tiles[pairCheck.tile2.id].paired = true;
+      pairCheck.tile1 = null;
+      pairCheck.tile2 = null;
+      return ({
+        tiles: tiles,
+        pairCheck: pairCheck,
+      });
+    }
+    else {
+      console.log("Tiles are not pairs");
+      tiles[pairCheck.tile1.id].checked = false;
+      tiles[pairCheck.tile2.id].checked = false;
+      pairCheck.tile1 = null;
+      pairCheck.tile2 = null;
+      return ({
+        tiles:tiles,
+        pairCheck: pairCheck
+      })
+    }
   }
 
   render() {
@@ -109,15 +162,17 @@ class App extends Component {
       tiles = 
         <Tiles 
           tiles={this.state.tiles} 
-          clicked={this.flipTileHandler} 
+          flipped={this.flipTileHandler} 
         />;
     }
     
     return (
       <Aux>
-        <button onClick={this.startGameHandler}>Start Game</button>
-        <div className={classes.grid}>
-          {tiles}
+        <div className={classes.App}>
+          <button onClick={this.startGameHandler}>Start Game</button>
+          <div className={classes.Grid}>
+            {tiles}
+          </div>
         </div>
       </Aux>
     );
