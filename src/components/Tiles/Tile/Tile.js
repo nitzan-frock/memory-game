@@ -8,7 +8,6 @@ const Tile = (props) => {
     );
 
     if (props.checked === true) {
-        console.log("tile checked");
         tile = (
             <img className="image" src={props.img} alt="" />
         );
