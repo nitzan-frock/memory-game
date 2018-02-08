@@ -3,10 +3,11 @@
     box-shadow: 0 4px 8px 0 #aaa;
     transition: 0.3s;
     cursor: pointer;
-
+    object-fit: cover;
     display: flex;
     justify-content: center;
     align-items: center;
+    font-size: 50px;
 }
 
 .Tile:hover {
