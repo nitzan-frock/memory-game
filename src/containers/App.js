@@ -33,7 +33,6 @@ class App extends Component {
     let numOfTiles = 8;
     const tiles = [];
     for (let i = 0; i < numOfTiles; i++) {
-      console.log("tile " + i + " created");
       const tile = {
         id: i,
         img: null,
@@ -42,7 +41,6 @@ class App extends Component {
       };
       tiles.push(tile);
     }
-    console.log(tiles);
     return tiles;
   }
 
@@ -69,7 +67,6 @@ class App extends Component {
   }
 
   setTileImage = (tiles, images) => {
-    console.log("in setTileImage");
     const tilesLength = tiles.length;
     const tileIndex = this.shuffleTiles(this.indexTiles(tilesLength));
     let pair = 0;
@@ -84,14 +81,11 @@ class App extends Component {
         imgIndex++;
       }
     }
-    console.log(tiles);
     return tiles;
   }
 
   startGameHandler = () => {
-    console.log("in startGameHandler");
     let tiles = this.initTiles();
-    console.log(tiles);
     const images = this.shuffleTiles(IMAGES);
     tiles = this.setTileImage(tiles, images);
     this.setState((prevState, props) => {
@@ -103,27 +97,17 @@ class App extends Component {
   }
 
   flipTileHandler = (tileID) => {
-    console.log("in flipTileHandler");
-    console.log("   current Tiles selected:");
-    console.log(this.state.currentTiles.tile1);
-    console.log(this.state.currentTiles.tile2);
     const tiles = [...this.state.tiles];
     let currentTiles = {...this.state.currentTiles};
-    console.log(currentTiles.tile1);
     if (!tiles[tileID].paired) {
       if (currentTiles.tile1 === null) {
-        console.log("   first tile is null, so flip the current tile");
         currentTiles.tile1 = tileID;
         tiles[tileID].checked = true;
-        console.log(currentTiles);
       }
       else { // another tile has been clicked
         let prevTile = currentTiles.tile1;
-        console.log("   prevTile: " + prevTile);
-        console.log("   currentTile: " + tileID);
         if (prevTile === tileID) { 
           // previous tile and current tile are the same, so flip it back over.
-          console.log("   same tile");
           tiles[prevTile].checked = false;
           currentTiles.tile1 = null;
         }
@@ -135,12 +119,10 @@ class App extends Component {
           // reset current tiles
           currentTiles = this.resetCurrentTiles(currentTiles);
         }
-        else { // tiles do not match
-          console.log("   tiles do not match");  
+        else { // tiles do not match 
           tiles[prevTile].checked = false;
           tiles[tileID].checked = false;
           // reset current tiles
-          console.log(currentTiles);
           currentTiles = this.resetCurrentTiles(currentTiles);
         }
       }
@@ -158,7 +140,6 @@ class App extends Component {
   }
 
   render() {
-    console.log("rendered.");
     let tiles = null;
     if (this.state.gameStart) {
       tiles = 
