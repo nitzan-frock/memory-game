@@ -14,7 +14,7 @@ const IMAGES = [
   {URL: "https://www.wpcc.org.uk/images/nature/mammals/header-squirrel.jpg"},
   {URL: "https://cnet3.cbsistatic.com/img/FS1oJLl_P4eOmsXtJW4iy8mBSVA=/fit-in/970x0/2017/12/04/15331940-54a1-48c8-beb9-c7f6d1d29d71/gettyimages-590647279.jpg"},
   {URL: "https://www.hindimeaning.com/pictures/animals/bear.png"},
-  {URL: "https://media.giphy.com/media/9MFsKQ8A6HCN2/giphy.gif"}
+  {URL: "https://media.giphy.com/media/9MFsKQ8A6HCN2/giphy.gif"},
 ]
 
 class App extends Component {
@@ -25,7 +25,7 @@ class App extends Component {
     gameStart: false,
     currentTiles: {
       tile1: null,
-      tile2: null,
+      //tile2: null,
     }
   }
 
@@ -94,6 +94,25 @@ class App extends Component {
         gameStart: !prevState.gameStart
       }
     });
+    this.showTiles(tiles);
+  }
+
+  showTiles = (tiles) => {
+    for (let i = 0; i < Object.keys(tiles).length; i++){
+      tiles[i].checked = !tiles[i].checked;
+    }
+    this.setState(() => {
+      return {tiles}
+    }, setTimeout(() => {
+      
+    }, 5000))
+    // setTimeout(() => {
+    //   this.setState(() => {
+    //     return {
+    //       tiles: tiles,
+    //     }
+    //   } )
+    // }, 5000);
   }
 
   flipTileHandler = (tileID) => {
