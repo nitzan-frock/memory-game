@@ -9,7 +9,7 @@ const Tile = (props) => {
 
     if (props.checked === true) {
         tile = (
-            <img className="image" src={props.img} alt="" />
+            <img className="Image" src={props.img} alt="" />
         );
     }
     

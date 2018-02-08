@@ -23,10 +23,6 @@ class App extends Component {
     tiles: [],
     numberOfTilesClicked: 0,
     gameStart: false,
-    // pairCheck: {
-    //   tile1: null,
-    //   tile2: null,
-    // },
     currentTiles: {
       tile1: null,
       tile2: null,
@@ -137,13 +133,14 @@ class App extends Component {
           tiles[prevTile].paired = true;
           tiles[tileID].paired = true;
           // reset current tiles
-          currentTiles = this.resetCurrentTiles(currentTiles)
+          currentTiles = this.resetCurrentTiles(currentTiles);
         }
         else { // tiles do not match
           console.log("   tiles do not match");  
           tiles[prevTile].checked = false;
           tiles[tileID].checked = false;
           // reset current tiles
+          console.log(currentTiles);
           currentTiles = this.resetCurrentTiles(currentTiles);
         }
       }
@@ -154,134 +151,11 @@ class App extends Component {
     });
   }
 
-  // flipTileHandler = (tileID) => {
-  //   console.log("in flipTileHandler");
-  //   console.log("   current Tiles selected:");
-  //   console.log(this.state.currentTiles.tile1);
-  //   console.log(this.state.currentTiles.tile2);
-  //   this.setState((prevState, props) => {
-  //     const tiles = [...prevState.tiles];
-  //     let currentTiles = {...prevState.currentTiles};
-  //     console.log(currentTiles.tile1);
-  //       if (!tiles[tileID].paired) {
-  //         if (currentTiles.tile1 === null) {
-  //         console.log("   first tile is null, so flip the current tile");
-  //         currentTiles.tile1 = tileID;
-  //         tiles[tileID].checked = true;
-  //         console.log(currentTiles);
-  //         return {
-  //           tiles: tiles,
-  //           currentTiles: currentTiles,
-  //         }
-  //       }
-  //       else { // another tile has been clicked
-  //         let prevTile = currentTiles.tile1;
-  //         console.log("   prevTile: " + prevTile);
-  //         console.log("   currentTile: " + tileID);
-  //         if (prevTile === tileID) { 
-  //           // previous tile and current tile are the same, so flip it back over.
-  //           console.log("   same tile");
-  //           tiles[prevTile].checked = false;
-  //           currentTiles.tile1 = null;
-  //           return {
-  //             tiles: tiles,
-  //             currentTiles: currentTiles,
-  //           }
-  //         }
-  //         else if (tiles[prevTile].img === tiles[tileID].img) { 
-  //           // tiles match
-  //           tiles[tileID].checked = true;
-  //           tiles[prevTile].paired = true;
-  //           tiles[tileID].paired = true;
-  //           // reset current tiles
-  //           currentTiles = this.resetCurrentTiles(currentTiles)
-  //           return {
-  //             tiles: tiles,
-  //             currentTiles: currentTiles,
-  //           }
-  //         }
-  //         else { // tiles do not match
-  //           console.log("   tiles do not match");  
-  //           tiles[prevTile].checked = false;
-  //           tiles[tileID].checked = false;
-  //           // reset current tiles
-  //           currentTiles = this.resetCurrentTiles(currentTiles);
-  //           return {
-  //             tiles: tiles,
-  //             currentTiles: currentTiles
-  //           }
-  //         }
-  //       }
-  //     }
-  //   });
-  // }
-
   resetCurrentTiles = (currentTiles) => {
     currentTiles.tile1 = null;
-    currentTiles.tile2 = null;
+    //currentTiles.tile2 = null;
     return currentTiles;
   }
-
-  // tilesClickedHandler = (tiles, pairCheck) => {
-  //   console.log("in tilesClickedHandler");
-  //   if (pairCheck.tile1.img === pairCheck.tile2.img) {
-  //     console.log(" images are equal");
-  //     tiles[pairCheck.tile1.id].paired = true;
-  //     tiles[pairCheck.tile2.id].paired = true;
-  //     //pairCheck.tile1 = null;
-  //     //pairCheck.tile2 = null;
-  //     return ({
-  //       tiles: tiles,
-  //       pairCheck: pairCheck,
-  //     });
-  //   }
-  //   else {
-  //     console.log(" Tiles are not pairs");
-  //     // tiles[pairCheck.tile1.id].checked = false;
-  //     // tiles[pairCheck.tile2.id].checked = false;
-  //     // pairCheck.tile1 = null;
-  //     // pairCheck.tile2 = null;
-  //     return ({
-  //       tiles:tiles,
-  //       pairCheck: pairCheck
-  //     })
-  //   }
-  // }
-
-  // resetCheckedTilesMain = (tiles, pairCheck, numberOfTilesClicked) => {
-  //   console.log("number of tiles clicked before going into reset: " + numberOfTilesClicked);
-  //   if (numberOfTilesClicked === 2) {
-  //     console.log(pairCheck);
-  //     console.log("tile 1 checked?: " + tiles[pairCheck.tile1.id].checked);
-  //     console.log("tile 2 checked?: " + tiles[pairCheck.tile2.id].checked);
-  //     return setTimeout((tiles, pairCheck, numberOfTilesClicked) => {
-  //       console.log(" pairCheck within setTimeout");
-  //       console.log(pairCheck);
-  //       console.log(" in setTimeout within setState");
-  //       console.log(tiles);
-  //       console.log(pairCheck);
-  //       const tilesReset = this.resetCheckedTiles(tiles, pairCheck, numberOfTilesClicked); 
-  //       return {
-  //         tiles: tilesReset.tiles,
-  //         pairCheck: tilesReset.pairCheck,
-  //         numberOfTilesClicked: numberOfTilesClicked
-  //       }
-  //     }, 1000);
-  //   }
-  // }
-
-  // resetCheckedTiles = (tiles, pairCheck, numberOfTilesClicked) => {
-  //   tiles[pairCheck.tile1.id].checked = false;
-  //   tiles[pairCheck.tile2.id].checked = false;
-  //   pairCheck.tile1 = null;
-  //   pairCheck.tile2 = null;
-  //   numberOfTilesClicked = 0;
-  //   return ({
-  //     tiles: tiles,
-  //     pairCheck: pairCheck,
-  //     numberOfTilesClicked: numberOfTilesClicked
-  //   });
-  // }
 
   render() {
     console.log("rendered.");

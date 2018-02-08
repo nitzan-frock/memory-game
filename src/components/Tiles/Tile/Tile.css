@@ -3,8 +3,7 @@
     box-shadow: 0 4px 8px 0 #aaa;
     transition: 0.3s;
     cursor: pointer;
-    object-fit: cover;
-    display: flex;
+    display: inline-flex;
     justify-content: center;
     align-items: center;
     font-size: 50px;
@@ -12,4 +11,8 @@
 
 .Tile:hover {
     box-shadow: 0 6px 12px 0 #aaa;
+}
+
+img {
+    max-width: 100%;
 }
