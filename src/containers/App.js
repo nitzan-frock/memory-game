@@ -22,6 +22,7 @@ class App extends Component {
     // tiles will be initialized on gameStart
     tiles: [],
     numberOfTilesClicked: 0,
+    renderTiles: false,
     gameStart: false,
     currentTiles: {
       tile1: null,
@@ -91,7 +92,7 @@ class App extends Component {
     this.setState((prevState, props) => {
       return {
         tiles: tiles,
-        gameStart: !prevState.gameStart
+        renderTiles: !prevState.renderTiles,
       }
     });
     this.showTiles(tiles);
@@ -101,24 +102,33 @@ class App extends Component {
     for (let i = 0; i < Object.keys(tiles).length; i++){
       tiles[i].checked = !tiles[i].checked;
     }
+    // sets the tiles to flipped to give a breif hint then flips them back over
     this.setState(() => {
-      return {tiles}
-    }, setTimeout(() => {
-      
-    }, 5000))
-    // setTimeout(() => {
-    //   this.setState(() => {
-    //     return {
-    //       tiles: tiles,
-    //     }
-    //   } )
-    // }, 5000);
+      console.log(tiles);
+      return {tiles: tiles}
+    }, () => {
+      setTimeout(() => {
+        this.setState(prevState => {
+          let tiles = [...prevState.tiles];
+          console.log("tiles in setTimeout");
+          console.log(tiles);
+          for (let i = 0; i < tiles.length; i++){
+            tiles[i].checked = !tiles[i].checked;
+          }
+          return {
+            tiles: tiles,
+            gameStart: !prevState.gameStart
+          };
+        })
+      }, 1500)
+    });
   }
 
   flipTileHandler = (tileID) => {
+    console.log("flipTileHandler");
     const tiles = [...this.state.tiles];
     let currentTiles = {...this.state.currentTiles};
-    if (!tiles[tileID].paired) {
+    if (!tiles[tileID].paired && this.state.gameStart) {
       if (currentTiles.tile1 === null) {
         currentTiles.tile1 = tileID;
         tiles[tileID].checked = true;
@@ -129,6 +139,10 @@ class App extends Component {
           // previous tile and current tile are the same, so flip it back over.
           tiles[prevTile].checked = false;
           currentTiles.tile1 = null;
+          this.setState({
+            tiles: tiles,
+            currentTiles: currentTiles
+          });
         }
         else if (tiles[prevTile].img === tiles[tileID].img) { 
           // tiles match
@@ -137,11 +151,38 @@ class App extends Component {
           tiles[tileID].paired = true;
           // reset current tiles
           currentTiles = this.resetCurrentTiles(currentTiles);
+          this.setState({
+            tiles: tiles,
+            currentTiles: currentTiles
+          });
         }
         else { // tiles do not match 
-          tiles[prevTile].checked = false;
-          tiles[tileID].checked = false;
+          //tiles[prevTile].checked = false;
+          //tiles[tileID].checked = false;
           // reset current tiles
+          currentTiles.tile1 = null;
+          console.log("   prevTile: " + prevTile);
+          this.setState((prevState) => {
+            const tiles = [...prevState.tiles];
+            tiles[tileID].checked = !tiles[tileID].checked;
+            return {
+              tiles: tiles,
+              currentTiles: currentTiles
+            }
+          },() => {
+          setTimeout(() => {
+            this.setState((prevState) => {
+              let tiles = [...prevState.tiles];
+              console.log(tiles);
+              tiles[prevTile].checked = !tiles[prevTile].checked;
+              tiles[tileID].checked = !tiles[tileID].checked;
+              return {
+                tiles: tiles
+              }
+            }
+            )
+          }, 750)
+        })
           currentTiles = this.resetCurrentTiles(currentTiles);
         }
       }
@@ -159,11 +200,12 @@ class App extends Component {
   }
 
   render() {
+    console.log("rendered");
     let tiles = null;
-    if (this.state.gameStart) {
+    if (this.state.renderTiles) {
       tiles = 
         <Tiles 
-          tiles={this.state.tiles} 
+          tiles={this.state.tiles}
           flipped={this.flipTileHandler} 
         />;
     }
