@@ -4,6 +4,8 @@ import './App.css';
 import Tiles from '../components/Tiles/Tiles';
 import Aux from '../hoc/Auxillary';
 import classes from './App.css';
+import Score from '../components/PlayerStatus/Score/Score';
+import Lives from '../components/PlayerStatus/Lives/Lives';
 
 const IMAGES = [
   {URL: "http://i0.kym-cdn.com/photos/images/newsfeed/000/915/652/b49.gif"},
@@ -22,12 +24,14 @@ class App extends Component {
     // tiles will be initialized on gameStart
     tiles: [],
     numberOfTilesClicked: 0,
+    pairsMatched: 0,
     renderTiles: false,
     gameStart: false,
     currentTiles: {
       tile1: null,
       //tile2: null,
-    }
+    },
+    lives: 3
   }
 
   initTiles = () => {
@@ -120,7 +124,7 @@ class App extends Component {
             gameStart: !prevState.gameStart
           };
         })
-      }, 1500)
+      }, 1000)
     });
   }
 
@@ -128,7 +132,11 @@ class App extends Component {
     console.log("flipTileHandler");
     const tiles = [...this.state.tiles];
     let currentTiles = {...this.state.currentTiles};
-    if (!tiles[tileID].paired && this.state.gameStart) {
+    if (
+      !tiles[tileID].paired && 
+      this.state.gameStart && 
+      this.state.numberOfTilesClicked < 1) {
+        
       if (currentTiles.tile1 === null) {
         currentTiles.tile1 = tileID;
         tiles[tileID].checked = true;
@@ -151,9 +159,14 @@ class App extends Component {
           tiles[tileID].paired = true;
           // reset current tiles
           currentTiles = this.resetCurrentTiles(currentTiles);
-          this.setState({
-            tiles: tiles,
-            currentTiles: currentTiles
+          this.setState((prevState) => {
+            let pairsMatched = prevState.pairsMatched;
+            console.log(pairsMatched);
+            return {
+              tiles: tiles,
+              pairsMatched: pairsMatched+1,
+              currentTiles: currentTiles
+            }
           });
         }
         else { // tiles do not match 
@@ -164,10 +177,12 @@ class App extends Component {
           console.log("   prevTile: " + prevTile);
           this.setState((prevState) => {
             const tiles = [...prevState.tiles];
+            let lives = prevState.lives;
             tiles[tileID].checked = !tiles[tileID].checked;
             return {
               tiles: tiles,
-              currentTiles: currentTiles
+              currentTiles: currentTiles,
+              lives: lives-1
             }
           },() => {
           setTimeout(() => {
@@ -177,7 +192,7 @@ class App extends Component {
               tiles[prevTile].checked = !tiles[prevTile].checked;
               tiles[tileID].checked = !tiles[tileID].checked;
               return {
-                tiles: tiles
+                tiles: tiles,
               }
             }
             )
@@ -213,9 +228,13 @@ class App extends Component {
     return (
       <Aux>
         <div className={classes.App}>
-          <button onClick={this.startGameHandler}>Start Game</button>
+          <button style={{visibility: this.state.renderTiles ? "hidden" : ""}} onClick={this.startGameHandler}>Start Game</button>
           <div className={classes.Grid}>
             {tiles}
+          </div>
+          <div style={{visibility: this.state.renderTiles ? "" : "hidden"}} >
+            <Score pairsMatched={this.state.pairsMatched} />
+            <Lives lives={this.state.lives}/>
           </div>
         </div>
       </Aux>
