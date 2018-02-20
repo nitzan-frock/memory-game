@@ -1,6 +1,6 @@
 {
   "name": "memery-game",
-  "homepage": "https://nitzanf.github.io/memery-game",
+  "homepage": "https://nitzanf.github.io/memory-game",
   "version": "0.1.0",
   "private": true,
   "dependencies": {
