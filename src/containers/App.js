@@ -205,7 +205,7 @@ class App extends Component {
               }
             }
             )
-          }, 750)
+          }, 500)
         })
           currentTiles = this.resetCurrentTiles(currentTiles);
         }
