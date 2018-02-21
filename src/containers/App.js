@@ -257,24 +257,28 @@ class App extends Component {
     }
     
     return (
-      <Aux>
-        <Modal show={this.state.gameOver}>
-          <GameOver 
-            restartGame={this.restartGameHandler}
-            closeTab={this.closeTabHandler}
-            won={this.state.won} />
-        </Modal>
-        <div className={classes.App}>
-          <button style={{visibility: this.state.renderTiles ? "hidden" : ""}} onClick={this.startGameHandler}>Start Game</button>
-          <div className={classes.Grid}>
-            {tiles}
+      <div className={classes.Wrapper}>
+        <Aux>
+          <Modal show={this.state.gameOver}>
+            <GameOver 
+              restartGame={this.restartGameHandler}
+              closeTab={this.closeTabHandler}
+              won={this.state.won} />
+          </Modal>
+          <div className={classes.App}>
+            <button style={{visibility: this.state.renderTiles ? "hidden" : ""}} onClick={this.startGameHandler}>Start Game</button>
+            <div className={classes.Wrapper}>
+              <div className={classes.Grid}>
+                {tiles}
+              </div>
+            </div>
+            <div style={{visibility: this.state.renderTiles ? "" : "hidden"}} >
+              <Score pairsMatched={this.state.pairsMatched} />
+              <Lives lives={this.state.lives}/>
+            </div>
           </div>
-          <div style={{visibility: this.state.renderTiles ? "" : "hidden"}} >
-            <Score pairsMatched={this.state.pairsMatched} />
-            <Lives lives={this.state.lives}/>
-          </div>
-        </div>
-      </Aux>
+        </Aux>
+      </div>
     );
   }
 }
