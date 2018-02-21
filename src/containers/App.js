@@ -2,22 +2,13 @@ import React, { Component } from 'react';
 
 import './App.css';
 import Tiles from '../components/Tiles/Tiles';
+import IMAGES from '../assets/images/images';
 import Aux from '../hoc/Auxillary';
 import classes from './App.css';
 import Score from '../components/PlayerStatus/Score/Score';
 import Lives from '../components/PlayerStatus/Lives/Lives';
-
-const IMAGES = [
-  {URL: "http://i0.kym-cdn.com/photos/images/newsfeed/000/915/652/b49.gif"},
-  {URL: "http://i0.kym-cdn.com/entries/icons/original/000/020/016/wednesday.jpg"},
-  {URL: "https://thumbs-prod.si-cdn.com/yvyBUlWt-LPMnhEbBLV5gpX0vhQ=/800x600/filters:no_upscale()/https://public-media.smithsonianmag.com/filer/0c/5f/0c5fc6f8-1b9b-4510-8b15-163482a3e041/istock_6413768_medium.jpg"},
-  {URL: "https://img.purch.com/w/660/aHR0cDovL3d3dy5saXZlc2NpZW5jZS5jb20vaW1hZ2VzL2kvMDAwLzA5Ny8wNzQvb3JpZ2luYWwvbW9ua2V5LWNvdW50aW5nLmpwZw=="},
-  {URL: "https://images.pexels.com/photos/236230/pexels-photo-236230.jpeg?h=350&auto=compress&cs=tinysrgb"},
-  {URL: "https://www.wpcc.org.uk/images/nature/mammals/header-squirrel.jpg"},
-  {URL: "https://cnet3.cbsistatic.com/img/FS1oJLl_P4eOmsXtJW4iy8mBSVA=/fit-in/970x0/2017/12/04/15331940-54a1-48c8-beb9-c7f6d1d29d71/gettyimages-590647279.jpg"},
-  {URL: "https://www.hindimeaning.com/pictures/animals/bear.png"},
-  {URL: "https://media.giphy.com/media/9MFsKQ8A6HCN2/giphy.gif"},
-]
+import GameOver from '../components/UI/GameOver/GameOver';
+import Modal from '../components/Modal/Modal';
 
 class App extends Component {
   state = {
@@ -27,15 +18,16 @@ class App extends Component {
     pairsMatched: 0,
     renderTiles: false,
     gameStart: false,
+    gameOver: false,
     currentTiles: {
-      tile1: null,
-      //tile2: null,
+      tile1: null
     },
-    lives: 3
+    lives: 3,
+    won: false
   }
 
   initTiles = () => {
-    let numOfTiles = 8;
+    let numOfTiles = 16;
     const tiles = [];
     for (let i = 0; i < numOfTiles; i++) {
       const tile = {
@@ -124,7 +116,7 @@ class App extends Component {
             gameStart: !prevState.gameStart
           };
         })
-      }, 1000)
+      }, 1500)
     });
   }
 
@@ -147,6 +139,7 @@ class App extends Component {
           // previous tile and current tile are the same, so flip it back over.
           tiles[prevTile].checked = false;
           currentTiles.tile1 = null;
+
           this.setState({
             tiles: tiles,
             currentTiles: currentTiles
@@ -157,32 +150,48 @@ class App extends Component {
           tiles[tileID].checked = true;
           tiles[prevTile].paired = true;
           tiles[tileID].paired = true;
+
           // reset current tiles
           currentTiles = this.resetCurrentTiles(currentTiles);
+
           this.setState((prevState) => {
             let pairsMatched = prevState.pairsMatched;
-            console.log(pairsMatched);
+            let allPairsMatched = tiles.length / ++pairsMatched;
+            let gameOver = prevState.gameOver;
+            let gameWon = prevState.won;
+            if (allPairsMatched === 2) {
+              gameOver = true;
+              gameWon = true;
+            }
+
             return {
               tiles: tiles,
-              pairsMatched: pairsMatched+1,
+              gameOver: gameOver,
+              won: gameWon,
+              pairsMatched: pairsMatched,
               currentTiles: currentTiles
             }
           });
         }
         else { // tiles do not match 
-          //tiles[prevTile].checked = false;
-          //tiles[tileID].checked = false;
           // reset current tiles
           currentTiles.tile1 = null;
           console.log("   prevTile: " + prevTile);
           this.setState((prevState) => {
             const tiles = [...prevState.tiles];
             let lives = prevState.lives;
+            let gameOver = prevState.gameOver;
             tiles[tileID].checked = !tiles[tileID].checked;
+            lives--;
+            console.log("lives left: " + lives);
+            if (!lives) {
+              gameOver = true;
+            }
             return {
               tiles: tiles,
+              gameOver: gameOver,
               currentTiles: currentTiles,
-              lives: lives-1
+              lives: lives
             }
           },() => {
           setTimeout(() => {
@@ -210,8 +219,30 @@ class App extends Component {
 
   resetCurrentTiles = (currentTiles) => {
     currentTiles.tile1 = null;
-    //currentTiles.tile2 = null;
     return currentTiles;
+  }
+
+  restartGameHandler = () => {
+    const defaultState = {
+      // tiles will be initialized on gameStart
+      tiles: [],
+      numberOfTilesClicked: 0,
+      pairsMatched: 0,
+      renderTiles: false,
+      gameStart: false,
+      gameOver: false,
+      currentTiles: {
+        tile1: null
+      },
+      lives: 3,
+      won: false
+    };
+    this.setState(defaultState);
+    this.startGameHandler();
+  }
+
+  closeTabHandler = () => {
+    window.close();
   }
 
   render() {
@@ -227,6 +258,12 @@ class App extends Component {
     
     return (
       <Aux>
+        <Modal show={this.state.gameOver}>
+          <GameOver 
+            restartGame={this.restartGameHandler}
+            closeTab={this.closeTabHandler}
+            won={this.state.won} />
+        </Modal>
         <div className={classes.App}>
           <button style={{visibility: this.state.renderTiles ? "hidden" : ""}} onClick={this.startGameHandler}>Start Game</button>
           <div className={classes.Grid}>
