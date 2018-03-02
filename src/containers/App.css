@@ -2,23 +2,23 @@
   text-align: center;
 }
 
-.Grid {
-  display: grid;
-  width: 100%;
-  height: 100%;
-  grid-template-rows: 100px 100px 100px 100px;
-  grid-template-columns: 100px 100px 100px 100px;
-  grid-gap: 10px;
-  justify-content: center;
-  margin: 20px 20px;
-}
-
 .Wrapper {
   display: flex;
   justify-content: center;
   align-self: center;
 }
 
-@media (min-width: 450px) {
+.Grid {
+  display: grid;
+  grid-template-rows: repeat(4, 1fr);
+  grid-template-columns: repeat(4, 1fr);
+  grid-gap: 10px;
+  justify-content: center;
+}
 
+.GridWrapper {
+  display: flex;
+  justify-content: center;
+  align-self: center;
+  margin: 20px 20px;
 }

@@ -284,7 +284,7 @@ class App extends Component {
               onClick={this.startGameHandler}>
                 Start Game
             </button>
-            <div className={classes.Wrapper}>
+            <div className={classes.GridWrapper}>
               <div className={classes.Grid}>
                 {tiles}
               </div>
