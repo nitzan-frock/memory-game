@@ -9,6 +9,7 @@ import Score from '../components/PlayerStatus/Score/Score';
 import Lives from '../components/PlayerStatus/Lives/Lives';
 import GameOver from '../components/UI/GameOver/GameOver';
 import Modal from '../components/Modal/Modal';
+import Backdrop from '../components/UI/Backdrop/Backdrop';
 
 class App extends Component {
   state = {
@@ -23,7 +24,8 @@ class App extends Component {
       tile1: null
     },
     lives: 3,
-    won: false
+    won: false,
+    showBackdrop: false,
   }
 
   initTiles = () => {
@@ -43,6 +45,7 @@ class App extends Component {
 
   shuffleTiles = (array) => {
     let m = array.length, t, i;
+
     // while there are elements to shuffle
     while (m) {
       // pick a remaining element
@@ -52,14 +55,17 @@ class App extends Component {
       array[m] = array[i];
       array[i] = t;
     }
+
     return array;
   }
 
   indexTiles = (length) => {
     let index = [];
+
     for (let i = 0; i < length; i++) {
       index.push(i);
     }
+
     return index;
   }
 
@@ -68,16 +74,18 @@ class App extends Component {
     const tileIndex = this.shuffleTiles(this.indexTiles(tilesLength));
     let pair = 0;
     let imgIndex = 0;
+
     for (let i = 0; i < tileIndex.length; i++) {
       tiles[tileIndex[i]].img = images[imgIndex].URL;
+
       if (pair < 1) {
         pair++;
-      }
-      else {
+      } else {
         pair = 0;
         imgIndex++;
       }
     }
+
     return tiles;
   }
 
@@ -100,17 +108,16 @@ class App extends Component {
     }
     // sets the tiles to flipped to give a breif hint then flips them back over
     this.setState(() => {
-      console.log(tiles);
       return {tiles: tiles}
     }, () => {
       setTimeout(() => {
         this.setState(prevState => {
           let tiles = [...prevState.tiles];
-          console.log("tiles in setTimeout");
-          console.log(tiles);
+
           for (let i = 0; i < tiles.length; i++){
             tiles[i].checked = !tiles[i].checked;
           }
+
           return {
             tiles: tiles,
             gameStart: !prevState.gameStart
@@ -121,20 +128,20 @@ class App extends Component {
   }
 
   flipTileHandler = (tileID) => {
-    console.log("flipTileHandler");
     const tiles = [...this.state.tiles];
     let currentTiles = {...this.state.currentTiles};
+
     if (
       !tiles[tileID].paired && 
       this.state.gameStart && 
       this.state.numberOfTilesClicked < 1) {
         
-      if (currentTiles.tile1 === null) {
+      if (currentTiles.tile1 === null) { // flip over first clicked tile
         currentTiles.tile1 = tileID;
         tiles[tileID].checked = true;
-      }
-      else { // another tile has been clicked
+      } else { // another tile has been clicked
         let prevTile = currentTiles.tile1;
+
         if (prevTile === tileID) { 
           // previous tile and current tile are the same, so flip it back over.
           tiles[prevTile].checked = false;
@@ -144,8 +151,7 @@ class App extends Component {
             tiles: tiles,
             currentTiles: currentTiles
           });
-        }
-        else if (tiles[prevTile].img === tiles[tileID].img) { 
+        } else if (tiles[prevTile].img === tiles[tileID].img) { 
           // tiles match
           tiles[tileID].checked = true;
           tiles[prevTile].paired = true;
@@ -156,9 +162,13 @@ class App extends Component {
 
           this.setState((prevState) => {
             let pairsMatched = prevState.pairsMatched;
+
+            // check number of pairs matched
             let allPairsMatched = tiles.length / ++pairsMatched;
             let gameOver = prevState.gameOver;
             let gameWon = prevState.won;
+
+            // if the number of tiles divided by the total matched pairs is equal to two, then the game is over
             if (allPairsMatched === 2) {
               gameOver = true;
               gameWon = true;
@@ -172,36 +182,36 @@ class App extends Component {
               currentTiles: currentTiles
             }
           });
-        }
-        else { // tiles do not match 
+        } else { // tiles do not match 
           // reset current tiles
           currentTiles.tile1 = null;
-          console.log("   prevTile: " + prevTile);
           this.setState((prevState) => {
             const tiles = [...prevState.tiles];
             let lives = prevState.lives;
             let gameOver = prevState.gameOver;
             tiles[tileID].checked = !tiles[tileID].checked;
             lives--;
-            console.log("lives left: " + lives);
-            if (!lives) {
+
+            if (!lives) { // if no lives left...game over
               gameOver = true;
             }
+
             return {
               tiles: tiles,
               gameOver: gameOver,
               currentTiles: currentTiles,
+              numberOfTilesClicked: 2,
               lives: lives
             }
           },() => {
           setTimeout(() => {
             this.setState((prevState) => {
               let tiles = [...prevState.tiles];
-              console.log(tiles);
               tiles[prevTile].checked = !tiles[prevTile].checked;
               tiles[tileID].checked = !tiles[tileID].checked;
               return {
                 tiles: tiles,
+                numberOfTilesClicked: 0
               }
             }
             )
@@ -246,7 +256,6 @@ class App extends Component {
   }
 
   render() {
-    console.log("rendered");
     let tiles = null;
     if (this.state.renderTiles) {
       tiles = 
@@ -265,8 +274,16 @@ class App extends Component {
               closeTab={this.closeTabHandler}
               won={this.state.won} />
           </Modal>
+          <Backdrop show={this.state.gameOver} />
           <div className={classes.App}>
-            <button style={{visibility: this.state.renderTiles ? "hidden" : ""}} onClick={this.startGameHandler}>Start Game</button>
+            <button 
+              style={{
+                margin: "100px",
+                display: this.state.renderTiles ? "none" : ""
+              }} 
+              onClick={this.startGameHandler}>
+                Start Game
+            </button>
             <div className={classes.Wrapper}>
               <div className={classes.Grid}>
                 {tiles}
